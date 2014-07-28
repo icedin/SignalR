@@ -41,41 +41,41 @@ namespace Microsoft.AspNet.SignalR.Samples
                 map.MapSignalR();
             });
 
-            app.Map("/cookieauth", map =>
-            {
-                var options = new CookieAuthenticationOptions()
-                {
-                    AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
-                    LoginPath = CookieAuthenticationDefaults.LoginPath,
-                    LogoutPath = CookieAuthenticationDefaults.LogoutPath,
-                };
+            //app.Map("/cookieauth", map =>
+            //{
+            //    var options = new CookieAuthenticationOptions()
+            //    {
+            //        AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
+            //        LoginPath = CookieAuthenticationDefaults.LoginPath,
+            //        LogoutPath = CookieAuthenticationDefaults.LogoutPath,
+            //    };
 
-                map.UseCookieAuthentication(options);
+            //    map.UseCookieAuthentication(options);
 
-                map.Use(async (context, next) =>
-                {
-                    if (context.Request.Path.Value.Contains(options.LoginPath.Value))
-                    {
-                        if (context.Request.Method == "POST")
-                        {
-                            var form = await context.Request.ReadFormAsync();
-                            var userName = form["UserName"];
-                            var password = form["Password"];
+            //    map.Use(async (context, next) =>
+            //    {
+            //        if (context.Request.Path.Value.Contains(options.LoginPath.Value))
+            //        {
+            //            if (context.Request.Method == "POST")
+            //            {
+            //                var form = await context.Request.ReadFormAsync();
+            //                var userName = form["UserName"];
+            //                var password = form["Password"];
 
-                            var identity = new ClaimsIdentity(options.AuthenticationType);
-                            identity.AddClaim(new Claim(ClaimTypes.Name, userName));
-                            context.Authentication.SignIn(identity);
-                        }
-                    }
-                    else
-                    {
-                        await next();
-                    }
-                });
+            //                var identity = new ClaimsIdentity(options.AuthenticationType);
+            //                identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+            //                context.Authentication.SignIn(identity);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            await next();
+            //        }
+            //    });
 
-                map.MapSignalR<AuthenticatedEchoConnection>("/echo");
-                map.MapSignalR();
-            });
+            //    map.MapSignalR<AuthenticatedEchoConnection>("/echo");
+            //    map.MapSignalR();
+            //});
 
             BackgroundThread.Start();
         }
