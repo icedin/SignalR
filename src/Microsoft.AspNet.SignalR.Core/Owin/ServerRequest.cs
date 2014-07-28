@@ -24,7 +24,16 @@ namespace Microsoft.AspNet.SignalR.Owin
             _request = new OwinRequest(environment);
 
             // Cache user because AspNetWebSocket.CloseOutputAsync clears it. We need it during Hub.OnDisconnected
-            _user = _request.User;
+            var windowsUser = _request.User as WindowsPrincipal;
+            if (windowsUser != null)
+            {
+                // If we don't deep copy, the WindowsIdentity will sometimes be disposed in OnDisconnected. #2972
+                _user = windowsUser.Copy();
+            }
+            else
+            {
+                _user = _request.User;
+            }
         }
 
         public Uri Url
